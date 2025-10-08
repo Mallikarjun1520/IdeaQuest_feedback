@@ -1,23 +1,44 @@
-from flask import Flask, render_template, request
-
+from flask import (
+    Flask, request, jsonify, session, url_for, redirect,
+    render_template, flash, send_file, send_from_directory
+)
+import os
+from pymongo import MongoClient
+import json
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        team_name = request.form['team_name']
-        topic_name = request.form['topic_name']
-        # send to team page
-        return render_template('team.html', team_name=team_name, topic_name=topic_name)
-    return render_template('index.html')
+from pymongo import MongoClient
+import certifi
+
+MONGO_URI = "mongodb+srv://umeshyenugula2007_db_user:fwmIOPGPWBnzIoce@agritrade.29grdah.mongodb.net/Feedback?retryWrites=true&w=majority&appName=ideaquest"
+
+try:
+    client = MongoClient(
+        MONGO_URI,
+        tls=True,
+        tlsCAFile=certifi.where(),   
+        serverSelectionTimeoutMS=10000
+    )
+    client.admin.command('ping')
+    print("✅ MongoDB connection successful!")
+except Exception as e:
+    print("❌ MongoDB connection failed:", e)
 
 
-@app.route('/feedback', methods=['POST'])
-def feedback():
-    # (Optional) handle form inputs later — render the thank-you template so
-    # the user sees the styled confirmation page (templates/thankyou.html).
-    return render_template('thankyou.html')
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+MONGO_URI = "mongodb+srv://umeshyenugula2007_db_user:fwmIOPGPWBnzIoce@agritrade.29grdah.mongodb.net/"
+client = MongoClient(MONGO_URI)
+db = client["IdeaQuest"]
+teams=db["Teams"]
+feedback=db["Response"]
+app=Flask(__name__)
+@app.route("/",methods=["GET","POST"])
+def home():
+    if request.method=="POST":
+        teams.insert_one({"teamcode":1})
+        teamcode=request.form.get("teamcode",None)
+        if teamcode==None or teamcode=="":
+            return render_template("index.html")
+        return render_template("feedback.html")
+    return render_template("index.html")
+app.run(debug=True)
