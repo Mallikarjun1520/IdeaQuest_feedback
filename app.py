@@ -39,6 +39,7 @@ def home():
         teamcode=request.form.get("teamcode",None)
         if teamcode==None or teamcode=="":
             return render_template("index.html")
-        return render_template("feedback.html")
+        return render_template("team.html")
     return render_template("index.html")
 app.run(debug=True)
+
