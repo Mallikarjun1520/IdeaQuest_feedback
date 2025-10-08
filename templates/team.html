@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Details & Feedback</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    /* Star Rating */
+    .rating {
+      display: flex;
+      justify-content: center;
+      flex-direction: row-reverse;
+      gap: 5px;
+      margin: 10px 0 20px 0;
+    }
+
+    .rating input {
+      display: none;
+    }
+
+    .rating label {
+      font-size: 2rem;
+      color: #aaa; /* unselected stars */
+      cursor: pointer;
+      transition: color 0.3s ease, transform 0.2s ease, text-shadow 0.3s ease;
+    }
+
+    .rating input:checked ~ label,
+    .rating label:hover,
+    .rating label:hover ~ label {
+      color: #ffd700; /* golden yellow */
+      text-shadow: 0 0 6px #ffd700, 0 0 12px #ffec70, 0 0 20px #ffd700;
+      transform: scale(1.2);
+    }
+
+    /* Make container “transparent”/no inner box */
+    .container {
+      width: 90%;
+      max-width: 600px;
+      padding: 35px;
+      text-align: center;
+      background: none;
+      box-shadow: none;
+      border: none;
+      backdrop-filter: none;
+    }
+
+    /* Optional: make text stand out */
+    h1, h2, h3, p, textarea, button {
+      text-shadow: 0 0 8px #ffdfff, 0 0 15px #b87fff;
+    }
+
+    /* Team gallery images fully visible */
+    .team-gallery img {
+      width: 150px;
+      height: 150px;
+      border-radius: 15px;
+      object-fit: contain; /* show full image without cropping */
+      border: 2px solid #fff;
+      box-shadow: 0 0 15px rgba(220, 160, 255, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background-color: rgba(255,255,255,0.05);
+    }
+
+    .team-gallery img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 200, 200, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <!-- Logos -->
+  <div class="logo-bar">
+    <img src="{{ url_for('static', filename='images/csi_logo.jpg') }}" alt="Left Logo" class="logo left-logo">
+    <img src="{{ url_for('static', filename='images/griet.jpg') }}" alt="Right Logo" class="logo right-logo">
+  </div>
+
+  <div class="container">
+    <h1>Team: {{ team_name }}</h1>
+    <h2>Topic: {{ topic_name }}</h2>
+
+    <div class="team-gallery">
+      <img src="{{ url_for('static', filename='images/grp.jpg') }}" alt="Team photo 1">
+    </div>
+
+    <h3>Feedback Form</h3>
+    <form action="{{ url_for('feedback') }}" method="POST" class="feedback-form">
+      
+      <!-- Question 1: Star rating -->
+      <p>1. How did you find the event?</p>
+      <div class="rating">
+        <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+        <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+        <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+        <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+        <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+      </div>
+
+      <!-- Question 2 -->
+      <p>2. What did you enjoy the most?</p>
+      <textarea name="q2" rows="2" placeholder="Tell us what you enjoyed most..." required></textarea>
+
+      <!-- Question 3 -->
+      <p>3. Any suggestions for improvement?</p>
+      <textarea name="q3" rows="2" placeholder="Any suggestions to improve the event..."></textarea>
+
+      <button type="submit">Submit Feedback</button>
+    </form>
+  </div>
+</body>
+</html>
