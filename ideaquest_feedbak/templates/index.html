@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSI Club - IdeaQuest 2.0</title>
+  <!-- use Flask's url_for to load CSS from the static folder -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="logo-bar">
+  <img src="{{ url_for('static', filename='images/csi_logo.jpg') }}" alt="Left Logo" class="logo left-logo">
+  <img src="{{ url_for('static', filename='images/griet.jpg') }}" alt="Right Logo" class="logo right-logo">
+</div>
+
+  <div class="container">
+    <h1 class="club-name">CSI Club</h1>
+    <h2 class="event-name">IdeaQuest 2.0 2025</h2>
+    <p class="intro-text">
+      Welcome to IdeaQuest 2.0! Enter your team details below to continue.
+    </p>
+    <form action="/" method="POST">
+      <input type="text" name="teamcode" placeholder="Enter Team Code" required>
+      <p style="text-align: center;">You can Get it from the Sticker pasted on the Bench</p>
+      <button type="submit">Proceed</button>
+    </form>
+  </div>
+</body>
+</html>

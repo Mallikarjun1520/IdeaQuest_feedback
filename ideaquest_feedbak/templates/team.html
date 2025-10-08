@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Feedback | CSI IdeaQuest 2.0</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle, #0e0e1b, #000010);
+      color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .question-box {
+      margin: 40px auto;
+      width: 80%;
+      background: rgba(35, 35, 55, 0.95);
+      padding: 40px;
+      border-radius: 30px;
+      text-align: center;
+      box-shadow: 0 0 30px #6fffe9;
+      border: 2px solid #6fffe980;
+      transition: all 0.3s ease;
+    }
+
+    #imageQuestion {
+      max-width: 100%;
+      height: auto;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #6fffe9aa;
+      margin-bottom: 25px;
+    }
+
+    h1, h2, h3, p, textarea, .rating label {
+      text-shadow: 0 0 8px #6fffe9, 0 0 15px #4fcfdf;
+    }
+
+    /* Star rating */
+    .rating {
+      display: flex;
+      justify-content: center;
+      flex-direction: row-reverse;
+      gap: 5px;
+      margin: 10px 0 20px 0;
+    }
+
+    .rating input { display: none; }
+
+    .rating label {
+      font-size: 2rem;
+      color: #aaa;
+      cursor: pointer;
+      transition: color 0.3s ease, transform 0.2s ease, text-shadow 0.3s ease;
+    }
+
+    .rating input:checked ~ label,
+    .rating label:hover,
+    .rating label:hover ~ label {
+      color: #ffd700;
+      text-shadow: 0 0 6px #ffd700, 0 0 12px #ffec70, 0 0 20px #ffd700;
+      transform: scale(1.2);
+    }
+
+    textarea {
+      width: 90%;
+      padding: 12px;
+      border-radius: 15px;
+      border: none;
+      margin-bottom: 15px;
+      font-size: 1rem;
+      resize: none;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .team-gallery {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 25px 0;
+    }
+
+    .team-gallery img {
+      width: 150px;
+      height: 150px;
+      border-radius: 15px;
+      object-fit: contain;
+      border: 2px solid #fff;
+      box-shadow: 0 0 15px rgba(220, 160, 255, 0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background-color: rgba(255,255,255,0.05);
+    }
+
+    .team-gallery img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 25px rgba(255, 200, 200, 0.8);
+    }
+
+    .button {
+      background: linear-gradient(to right, #181828, #0f0f22);
+      border-radius: 25px;
+      padding: 16px 45px;
+      font-size: 1.2rem;
+      color: #6fffe9;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 20px #6fffe950;
+      transition: 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .button:hover {
+      background: #6fffe9;
+      color: #000010;
+      box-shadow: 0 0 25px #6fffe9;
+    }
+
+    #resultBox {
+      display: none;
+      margin-top: 40px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    #resultMessage {
+      width: 60%;
+      margin: 0 auto;
+      padding: 40px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #6fffe9;
+      background: rgba(0,0,0,0.6);
+      border-radius: 25px;
+      box-shadow: 0 0 25px #6fffe9aa;
+      text-shadow: 1px 1px #000;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="question-box">
+  <img id="imageQuestion" src="" alt="Team Image">
+
+  <form id="feedbackForm" onsubmit="return false;">
+    <!-- Question 1: Star rating -->
+    <p>1. How did you find the event?</p>
+    <div class="rating">
+      <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+      <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+      <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+      <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+      <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+    </div>
+
+    <!-- Question 2 -->
+    <p>2. What did you enjoy the most?</p>
+    <textarea name="q2" rows="2" placeholder="Tell us what you enjoyed most..." required></textarea>
+
+    <!-- Question 3 -->
+    <p>3. Any suggestions for improvement?</p>
+    <textarea name="q3" rows="2" placeholder="Any suggestions to improve the event..."></textarea>
+
+    <button class="button" onclick="submitFeedback()">Submit Feedback</button>
+  </form>
+</div>
+
+<div id="resultBox">
+  <div id="resultMessage">Thanks for submitting!</div>
+</div>
+
+<script>
+  function loadQuestion() {
+    fetch('/getimage')
+      .then(res => res.json())
+      .then(data => {
+        if (data.image) {
+          document.getElementById('imageQuestion').src = data.image;
+          document.getElementById('resultBox').style.display = 'none';
+          document.querySelector('.question-box').style.display = 'block';
+        } else {
+          alert("Failed to load the image.");
+        }
+      })
+      .catch(err => console.error("Error fetching image:", err));
+  }
+
+  function submitFeedback() {
+    // Collect form data if needed
+    const form = document.getElementById('feedbackForm');
+    const formData = new FormData(form);
+
+    // Optionally send to backend via fetch
+    fetch('/submit', { method: 'POST', body: formData }).catch(err => console.error(err));
+
+    // Show the thanks box
+    document.querySelector('.question-box').style.display = 'none';
+    document.getElementById('resultBox').style.display = 'block';
+  }
+
+  window.onload = loadQuestion;
+</script>
+
+</body>
+</html>
