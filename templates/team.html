@@ -1,93 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team Details & Feedback</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Team Feedback | CSI IdeaQuest 2.0</title>
+
   <style>
-    /* Star Rating */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, #6a0dad, #3e007d, #1a0033);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      text-align: center;
+    }
+
+    /* Starry background overlay */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("https://www.transparenttextures.com/patterns/stardust.png");
+      opacity: 0.2;
+      pointer-events: none;
+      animation: starTwinkle 5s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes starTwinkle {
+      0%, 100% { opacity: 0.15; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Feedback Box */
+    .question-box {
+      width: 90%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 35px;
+      border-radius: 22px;
+      box-shadow:
+        0 0 25px rgba(130, 50, 200, 0.5),
+        0 0 60px rgba(180, 80, 255, 0.4),
+        inset 0 0 10px rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      animation: fadeIn 1.2s ease-in-out, containerGlow 3s ease-in-out infinite alternate;
+      z-index: 1;
+    }
+
+    @keyframes containerGlow {
+      0% { box-shadow: 0 0 25px rgba(130, 50, 200, 0.5), 0 0 60px rgba(180, 80, 255, 0.4), inset 0 0 10px rgba(255,255,255,0.15); }
+      50% { box-shadow: 0 0 35px rgba(180, 80, 255, 0.7), 0 0 80px rgba(220, 150, 255, 0.5), inset 0 0 15px rgba(255,255,255,0.2); }
+      100% { box-shadow: 0 0 25px rgba(130, 50, 200, 0.5), 0 0 60px rgba(180, 80, 255, 0.4), inset 0 0 10px rgba(255,255,255,0.15); }
+    }
+
+    #imageQuestion {
+      max-width: 100%;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(200, 130, 255, 0.6);
+      margin-bottom: 25px;
+      animation: imgSparkle 4s linear infinite;
+    }
+
+    @keyframes imgSparkle {
+      0%, 100% { box-shadow: 0 0 15px rgba(190, 120, 255, 0.5), 0 0 25px rgba(220, 160, 255, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(220, 160, 255, 0.7), 0 0 50px rgba(255, 200, 255, 0.6); }
+    }
+
+    h1, h2, h3, p {
+      text-shadow: 0 0 12px #cfa8ff, 0 0 25px #8a4fff;
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: #f3e9ff;
+    }
+
+    /* Star rating */
     .rating {
       display: flex;
       justify-content: center;
       flex-direction: row-reverse;
-      gap: 5px;
-      margin: 10px 0 20px 0;
+      gap: 8px;
+      margin: 10px 0 25px;
     }
 
-    .rating input {
-      display: none;
-    }
+    .rating input { display: none; }
 
     .rating label {
-      font-size: 2rem;
-      color: #aaa; /* unselected stars */
+      font-size: 2.2rem;
+      color: #b999ff;
       cursor: pointer;
-      transition: color 0.3s ease, transform 0.2s ease, text-shadow 0.3s ease;
+      transition: all 0.3s ease;
+      text-shadow: 0 0 8px #d2a8ff;
     }
 
     .rating input:checked ~ label,
     .rating label:hover,
     .rating label:hover ~ label {
-      color: #ffd700; /* golden yellow */
-      text-shadow: 0 0 6px #ffd700, 0 0 12px #ffec70, 0 0 20px #ffd700;
+      color: #ffd700;
+      text-shadow: 0 0 10px #ffea8a, 0 0 20px #ffce3c;
       transform: scale(1.2);
     }
 
-    /* Make container “transparent”/no inner box */
-    .container {
-      width: 90%;
-      max-width: 600px;
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      box-shadow: 0 0 8px rgba(180, 100, 255, 0.2);
+      resize: none;
+      transition: all 0.3s ease;
+    }
+
+    textarea:focus {
+      border-color: #b88bff;
+      box-shadow: 0 0 18px rgba(200, 130, 255, 0.8);
+      background-color: rgba(255, 255, 255, 0.18);
+    }
+
+    /* Button */
+    .button {
+      background: linear-gradient(90deg, #9b4dff, #6a0dad);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      box-shadow: 0 0 15px rgba(180, 90, 255, 0.6);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 14px 40px;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+    }
+
+    .button:hover {
+      background: linear-gradient(90deg, #b37fff, #8c2fff);
+      box-shadow: 0 0 30px rgba(200, 130, 255, 0.9);
+      transform: scale(1.05);
+    }
+
+    #resultBox {
+      display: none;
+      margin-top: 40px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    #resultMessage {
+      width: 60%;
+      margin: 0 auto;
       padding: 35px;
-      text-align: center;
-      background: none;
-      box-shadow: none;
-      border: none;
-      backdrop-filter: none;
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #f3e9ff;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      box-shadow: 0 0 25px rgba(190, 120, 255, 0.6);
+      text-shadow: 0 0 12px #cfa8ff, 0 0 25px #8a4fff;
     }
 
-    /* Optional: make text stand out */
-    h1, h2, h3, p, textarea, button {
-      text-shadow: 0 0 8px #ffdfff, 0 0 15px #b87fff;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Team gallery images fully visible */
-    .team-gallery img {
-      width: 150px;
-      height: 150px;
-      border-radius: 15px;
-      object-fit: contain; /* show full image without cropping */
-      border: 2px solid #fff;
-      box-shadow: 0 0 15px rgba(220, 160, 255, 0.5);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      background-color: rgba(255,255,255,0.05);
-    }
-
-    .team-gallery img:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 25px rgba(255, 200, 200, 0.8);
+    @media (max-width: 600px) {
+      .question-box { padding: 25px; }
+      .button { width: 100%; font-size: 1rem; }
+      #resultMessage { width: 90%; }
     }
   </style>
 </head>
+
 <body>
-  <!-- Logos -->
-  <div class="logo-bar">
-    <img src="{{ url_for('static', filename='images/csi_logo.jpg') }}" alt="Left Logo" class="logo left-logo">
-    <img src="{{ url_for('static', filename='images/griet.jpg') }}" alt="Right Logo" class="logo right-logo">
-  </div>
+  <div class="question-box">
+    <img id="imageQuestion" src="" alt="Team Image">
 
-  <div class="container">
-    <h1>Team: {{ team_name }}</h1>
-    <h2>Topic: {{ topic_name }}</h2>
-
-    <div class="team-gallery">
-      <img src="{{ url_for('static', filename='images/grp.jpg') }}" alt="Team photo 1">
-    </div>
-
-    <h3>Feedback Form</h3>
-    <form action="{{ url_for('feedback') }}" method="POST" class="feedback-form">
-      
-      <!-- Question 1: Star rating -->
+    <form id="feedbackForm" onsubmit="return false;">
       <p>1. How did you find the event?</p>
       <div class="rating">
         <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
@@ -97,16 +204,46 @@
         <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
       </div>
 
-      <!-- Question 2 -->
       <p>2. What did you enjoy the most?</p>
       <textarea name="q2" rows="2" placeholder="Tell us what you enjoyed most..." required></textarea>
 
-      <!-- Question 3 -->
       <p>3. Any suggestions for improvement?</p>
       <textarea name="q3" rows="2" placeholder="Any suggestions to improve the event..."></textarea>
 
-      <button type="submit">Submit Feedback</button>
+      <button class="button" onclick="submitFeedback()">Submit Feedback</button>
     </form>
   </div>
+
+  <div id="resultBox">
+    <div id="resultMessage">🌟 Thanks for your feedback, stargazer! 🌌</div>
+  </div>
+
+  <script>
+    function loadQuestion() {
+      fetch('/getimage')
+        .then(res => res.json())
+        .then(data => {
+          if (data.image) {
+            document.getElementById('imageQuestion').src = data.image;
+            document.getElementById('resultBox').style.display = 'none';
+            document.querySelector('.question-box').style.display = 'block';
+          } else {
+            alert("Failed to load the image.");
+          }
+        })
+        .catch(err => console.error("Error fetching image:", err));
+    }
+
+    function submitFeedback() {
+      const form = document.getElementById('feedbackForm');
+      const formData = new FormData(form);
+      fetch('/submit', { method: 'POST', body: formData }).catch(err => console.error(err));
+
+      document.querySelector('.question-box').style.display = 'none';
+      document.getElementById('resultBox').style.display = 'block';
+    }
+
+    window.onload = loadQuestion;
+  </script>
 </body>
 </html>
